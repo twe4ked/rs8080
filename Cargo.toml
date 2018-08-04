@@ -1,0 +1,6 @@
+[package]
+name = "emulator101"
+version = "0.1.0"
+authors = ["Odin Dutton <odindutton@gmail.com>"]
+
+[dependencies]
