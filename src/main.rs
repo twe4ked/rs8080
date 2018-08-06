@@ -16,16 +16,16 @@ fn disassemble(pc: usize, buffer: &Vec<u8>) -> usize {
     print!("{:04x} {:02x} ", pc, op_code);
 
     match op_code {
-        0x00 =>     println!("\tNOP"),
-        0x06 => {   println!("{:02x}\tMVI\tB,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
-        0x31 => {   println!("{:02x} {:02x}\tLXI\tSP${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0x3e => {   println!("{:02x}\tMVI\tA,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
-        0xc3 => {   println!("{:02x} {:02x}\tJMP\t${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xc5 =>     println!("\tPUSH\tB"),
-        0xd5 =>     println!("\tPUSH\tD"),
-        0xe5 =>     println!("\tPUSH\tH"),
-        0xf5 =>     println!("\tPUSH\tPSW"),
-        _ =>    {   println!("\t???"); op_bytes = 0; }
+        0x00 => { println!("\tNOP") },
+        0x06 => { println!("{:02x}\tMVI\tB,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
+        0x31 => { println!("{:02x} {:02x}\tLXI\tSP${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x3e => { println!("{:02x}\tMVI\tA,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
+        0xc3 => { println!("{:02x} {:02x}\tJMP\t${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xc5 => { println!("\tPUSH\tB") },
+        0xd5 => { println!("\tPUSH\tD") },
+        0xe5 => { println!("\tPUSH\tH") },
+        0xf5 => { println!("\tPUSH\tPSW") },
+           _ => { println!("\t???"); op_bytes = 0; }
     };
 
     op_bytes
@@ -47,7 +47,7 @@ fn step(mut state: State, buffer: &Vec<u8>) -> State {
             let byte_1 = buffer[pc + 1] as u16;
             let byte_2 = buffer[pc + 2] as u16;
 
-            state.sp = (byte_2<<8) | byte_1;
+            state.sp = (byte_2 << 8) | byte_1;
             state.pc += 2;
         },
         0xc3 => {
