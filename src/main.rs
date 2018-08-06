@@ -23,6 +23,8 @@ fn disassemble(pc: usize, buffer: &Vec<u8>) -> usize {
         0xd5 =>     println!("\tPUSH\tD"),
         0xe5 =>     println!("\tPUSH\tH"),
         0x3e => {   println!("{:02x}\tMVI\tA,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
+        0x06 => {   println!("{:02x}\tMVI\tB,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
+        0x31 => {   println!("{:02x} {:02x}\tLXI\tSP${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
         _ =>    {   println!("\t???"); op_bytes = 0; }
     };
 
