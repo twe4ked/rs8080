@@ -17,14 +17,14 @@ fn disassemble(pc: usize, buffer: &Vec<u8>) -> usize {
 
     match op_code {
         0x00 =>     println!("\tNOP"),
+        0x06 => {   println!("{:02x}\tMVI\tB,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
+        0x31 => {   println!("{:02x} {:02x}\tLXI\tSP${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x3e => {   println!("{:02x}\tMVI\tA,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
         0xc3 => {   println!("{:02x} {:02x}\tJMP\t${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xf5 =>     println!("\tPUSH\tPSW"),
         0xc5 =>     println!("\tPUSH\tB"),
         0xd5 =>     println!("\tPUSH\tD"),
         0xe5 =>     println!("\tPUSH\tH"),
-        0x3e => {   println!("{:02x}\tMVI\tA,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
-        0x06 => {   println!("{:02x}\tMVI\tB,#${0:02x}", buffer[pc + 1]); op_bytes = 2 },
-        0x31 => {   println!("{:02x} {:02x}\tLXI\tSP${1:02x}{0:02x}", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xf5 =>     println!("\tPUSH\tPSW"),
         _ =>    {   println!("\t???"); op_bytes = 0; }
     };
 
@@ -39,11 +39,9 @@ fn step(mut state: State, buffer: &Vec<u8>) -> State {
 
     match op_code {
         0x00 => { },
-        0xc3 => {
-            let byte_1 = buffer[pc + 1] as u16;
-            let byte_2 = buffer[pc + 2] as u16;
-
-            state.pc = (byte_2 << 8) | byte_1;
+        0x06 => {
+            state.b = buffer[pc + 1];
+            state.pc += 1;
         },
         0x31 => {
             let byte_1 = buffer[pc + 1] as u16;
@@ -52,9 +50,11 @@ fn step(mut state: State, buffer: &Vec<u8>) -> State {
             state.sp = (byte_2<<8) | byte_1;
             state.pc += 2;
         },
-        0x06 => {
-            state.b = buffer[pc + 1];
-            state.pc += 1;
+        0xc3 => {
+            let byte_1 = buffer[pc + 1] as u16;
+            let byte_2 = buffer[pc + 2] as u16;
+
+            state.pc = (byte_2 << 8) | byte_1;
         },
         _   => { state.pc = 0 },
     }
