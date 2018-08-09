@@ -70,6 +70,10 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
     op_bytes
 }
 
+fn read_16(buffer: &Vec<u8>, pc: usize) -> u16 {
+    ((buffer[pc + 2] as u16) << 8) | (buffer[pc + 1] as u16)
+}
+
 fn step(mut state: State, buffer: &Vec<u8>) -> State {
     let pc = state.pc as usize;
     let op_code = buffer[pc];
@@ -83,17 +87,11 @@ fn step(mut state: State, buffer: &Vec<u8>) -> State {
             state.pc += 1;
         },
         0x31 => {
-            let byte_1 = buffer[pc + 1] as u16;
-            let byte_2 = buffer[pc + 2] as u16;
-
-            state.sp = (byte_2 << 8) | byte_1;
+            state.sp = read_16(&buffer, pc as usize);
             state.pc += 2;
         },
         0xc3 => {
-            let byte_1 = buffer[pc + 1] as u16;
-            let byte_2 = buffer[pc + 2] as u16;
-
-            state.pc = (byte_2 << 8) | byte_1;
+            state.pc = read_16(&buffer, pc as usize);
         },
         _   => { state.pc = 0 },
     }
