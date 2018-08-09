@@ -1,3 +1,4 @@
+use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -9,8 +10,9 @@ struct State {
 }
 
 #[allow(dead_code)]
-fn disassemble(pc: usize, buffer: &Vec<u8>) -> usize {
-    let mut op_bytes = 1;
+fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
+    let mut op_bytes: u16 = 1;
+    let pc = pc as usize;
     let op_code = buffer[pc];
 
     print!("{:04x} {:02x} ", pc, op_code);
@@ -63,6 +65,7 @@ fn step(mut state: State, buffer: &Vec<u8>) -> State {
 }
 
 fn main() -> std::io::Result<()> {
+    let args: Vec<_> = env::args().collect();
     let mut file = File::open("invaders.rom")?;
     let mut buffer = vec![];
     let mut state = State {
@@ -73,20 +76,22 @@ fn main() -> std::io::Result<()> {
 
     file.read_to_end(&mut buffer)?;
 
-    loop {
-        println!("{:?}", state);
-        disassemble(state.pc as usize, &buffer);
+    if args.get(1) == Some(&"disassemble".to_string()) {
+        while state.pc < buffer.len() as u16 {
+            let op_bytes = disassemble(state.pc, &buffer);
+            if op_bytes == 0 { break }
+            state.pc += op_bytes;
+        }
+    } else {
+        loop {
+            println!("{:?}", state);
+            disassemble(state.pc, &buffer);
 
-        state = step(state, &buffer);
+            state = step(state, &buffer);
 
-        if state.pc == 0 { break }
+            if state.pc == 0 { break }
+        }
     }
-
-    // while pc < buffer.len() {
-    //     let op_bytes = disassemble(pc, &buffer);
-    //     if op_bytes == 0 { break }
-    //     pc += op_bytes;
-    // }
 
     Ok(())
 }
