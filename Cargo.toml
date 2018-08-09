@@ -1,5 +1,5 @@
 [package]
-name = "emulator101"
+name = "rs8080"
 version = "0.1.0"
 authors = ["Odin Dutton <odindutton@gmail.com>"]
 
