@@ -9,34 +9,36 @@ struct State {
     sp: u16,
 }
 
-fn disassemble_1(instruction: &'static str) {
-    println!("\t{instruction}", instruction = instruction)
+fn disassemble_1(instruction: &'static str) -> u16 {
+    println!("\t{instruction}", instruction = instruction);
+    1
 }
 
-fn disassemble_2(instruction: &'static str, byte_1: u8) {
-    println!("{byte_1:02x}\t{instruction}\t${byte_1:02x}", instruction = instruction, byte_1 = byte_1)
+fn disassemble_2(instruction: &'static str, byte_1: u8) -> u16 {
+    println!("{byte_1:02x}\t{instruction}\t${byte_1:02x}", instruction = instruction, byte_1 = byte_1);
+    2
 }
 
-fn disassemble_3(instruction: &'static str, byte_1: u8, byte_2: u8) {
-    println!("{byte_1:02x} {byte_2:02x}\t{instruction}\t${byte_2:02x}{byte_1:02x}", instruction = instruction, byte_1 = byte_1, byte_2 = byte_2)
+fn disassemble_3(instruction: &'static str, byte_1: u8, byte_2: u8) -> u16 {
+    println!("{byte_1:02x} {byte_2:02x}\t{instruction}\t${byte_2:02x}{byte_1:02x}", instruction = instruction, byte_1 = byte_1, byte_2 = byte_2);
+    3
 }
 
 #[allow(dead_code)]
 fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
-    let mut op_bytes: u16 = 1;
     let pc = pc as usize;
     let op_code = buffer[pc];
 
     print!("{:04x} {:02x} ", pc, op_code);
 
-    match op_code {
+    let op_bytes = match op_code {
         0x00 => { disassemble_1("NOP") },
-        0x01 => { disassemble_3("LXI B", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x01 => { disassemble_3("LXI B", buffer[pc + 1], buffer[pc + 2]) },
         0x02 => { disassemble_1("STAX B") },
         0x03 => { disassemble_1("INX B") },
         0x04 => { disassemble_1("INR B") },
         0x05 => { disassemble_1("DCR B") },
-        0x06 => { disassemble_2("MVI B", buffer[pc + 1]); op_bytes = 2 },
+        0x06 => { disassemble_2("MVI B", buffer[pc + 1]) },
         0x07 => { disassemble_1("RLC") },
         0x08 => { disassemble_1("-") },
         0x09 => { disassemble_1("DAD B") },
@@ -44,15 +46,15 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
         0x0b => { disassemble_1("DCX B") },
         0x0c => { disassemble_1("INR C") },
         0x0d => { disassemble_1("DCR C") },
-        0x0e => { disassemble_2("MVI C", buffer[pc + 1]); op_bytes = 2 },
+        0x0e => { disassemble_2("MVI C", buffer[pc + 1]) },
         0x0f => { disassemble_1("RRC") },
         0x10 => { disassemble_1("-") },
-        0x11 => { disassemble_3("LXI D", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x11 => { disassemble_3("LXI D", buffer[pc + 1], buffer[pc + 2]) },
         0x12 => { disassemble_1("STAX D") },
         0x13 => { disassemble_1("INX D") },
         0x14 => { disassemble_1("INR D") },
         0x15 => { disassemble_1("DCR D") },
-        0x16 => { disassemble_2("MVI D", buffer[pc + 1]); op_bytes = 2 },
+        0x16 => { disassemble_2("MVI D", buffer[pc + 1]) },
         0x18 => { disassemble_1("-") },
         0x19 => { disassemble_1("DAD D") },
         0x1a => { disassemble_1("LDAX D") },
@@ -61,33 +63,33 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
         0x1d => { disassemble_1("DCR E") },
         0x1f => { disassemble_1("RAR") },
         0x20 => { disassemble_1("RIM") },
-        0x21 => { disassemble_3("LXI H", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0x22 => { disassemble_3("SHLD", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x21 => { disassemble_3("LXI H", buffer[pc + 1], buffer[pc + 2]) },
+        0x22 => { disassemble_3("SHLD", buffer[pc + 1], buffer[pc + 2]) },
         0x23 => { disassemble_1("INX H") },
         0x24 => { disassemble_1("INR H") },
         0x25 => { disassemble_1("DCR H") },
-        0x26 => { disassemble_2("MVI H", buffer[pc + 1]); op_bytes = 2 },
+        0x26 => { disassemble_2("MVI H", buffer[pc + 1]) },
         0x27 => { disassemble_1("DAA") },
         0x28 => { disassemble_1("-") },
         0x29 => { disassemble_1("DAD H") },
-        0x2a => { disassemble_3("LHLD", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x2a => { disassemble_3("LHLD", buffer[pc + 1], buffer[pc + 2]) },
         0x2b => { disassemble_1("DCX H") },
         0x2c => { disassemble_1("INR L") },
-        0x2e => { disassemble_2("MVI L", buffer[pc + 1]); op_bytes = 2 },
+        0x2e => { disassemble_2("MVI L", buffer[pc + 1]) },
         0x2f => { disassemble_1("CMA") },
         0x30 => { disassemble_1("SIM") },
-        0x31 => { disassemble_3("LXI SP", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0x32 => { disassemble_3("STA A", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x31 => { disassemble_3("LXI SP", buffer[pc + 1], buffer[pc + 2]) },
+        0x32 => { disassemble_3("STA A", buffer[pc + 1], buffer[pc + 2]) },
         0x34 => { disassemble_1("INR M") },
         0x35 => { disassemble_1("DCR M") },
-        0x36 => { disassemble_2("MVI M", buffer[pc + 1]); op_bytes = 2 },
+        0x36 => { disassemble_2("MVI M", buffer[pc + 1]) },
         0x37 => { disassemble_1("STC") },
         0x38 => { disassemble_1("-") },
         0x39 => { disassemble_1("DAD SP") },
-        0x3a => { disassemble_3("LDA A", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0x3a => { disassemble_3("LDA A", buffer[pc + 1], buffer[pc + 2]) },
         0x3c => { disassemble_1("INR A") },
         0x3d => { disassemble_1("DCR A") },
-        0x3e => { disassemble_2("MVI A", buffer[pc + 1]); op_bytes = 2 },
+        0x3e => { disassemble_2("MVI A", buffer[pc + 1]) },
         0x3f => { disassemble_1("CMC") },
         0x41 => { disassemble_1("MOV B,C") },
         0x46 => { disassemble_1("MOV B,F") },
@@ -150,45 +152,45 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
         0xbe => { disassemble_1("CMP M") },
         0xc0 => { disassemble_1("RNZ") },
         0xc1 => { disassemble_1("POP B") },
-        0xc2 => { disassemble_3("JNZ", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xc3 => { disassemble_3("JMP", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xc4 => { disassemble_3("CNZ", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xc2 => { disassemble_3("JNZ", buffer[pc + 1], buffer[pc + 2]) },
+        0xc3 => { disassemble_3("JMP", buffer[pc + 1], buffer[pc + 2]) },
+        0xc4 => { disassemble_3("CNZ", buffer[pc + 1], buffer[pc + 2]) },
         0xc5 => { disassemble_1("PUSH B") },
-        0xc6 => { disassemble_2("ADI", buffer[pc + 1]); op_bytes = 2 },
+        0xc6 => { disassemble_2("ADI", buffer[pc + 1]) },
         0xc8 => { disassemble_1("RZ") },
         0xc9 => { disassemble_1("RET") },
-        0xca => { disassemble_3("JZ", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xcc => { disassemble_3("CZ", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xcd => { disassemble_3("CALL", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xca => { disassemble_3("JZ", buffer[pc + 1], buffer[pc + 2]) },
+        0xcc => { disassemble_3("CZ", buffer[pc + 1], buffer[pc + 2]) },
+        0xcd => { disassemble_3("CALL", buffer[pc + 1], buffer[pc + 2]) },
         0xd0 => { disassemble_1("RNC") },
         0xd1 => { disassemble_1("POP D") },
-        0xd2 => { disassemble_3("JNC", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xd3 => { disassemble_2("OUT", buffer[pc + 1]); op_bytes = 2 },
-        0xd4 => { disassemble_3("CNC", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xd2 => { disassemble_3("JNC", buffer[pc + 1], buffer[pc + 2]) },
+        0xd3 => { disassemble_2("OUT", buffer[pc + 1]) },
+        0xd4 => { disassemble_3("CNC", buffer[pc + 1], buffer[pc + 2]) },
         0xd5 => { disassemble_1("PUSH D") },
-        0xd6 => { disassemble_2("SUI", buffer[pc + 1]); op_bytes = 2 },
+        0xd6 => { disassemble_2("SUI", buffer[pc + 1]) },
         0xd8 => { disassemble_1("RC") },
-        0xda => { disassemble_3("JC", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xdb => { disassemble_2("IN", buffer[pc + 1]); op_bytes = 2 },
-        0xde => { disassemble_2("SBI", buffer[pc + 1]); op_bytes = 2 },
+        0xda => { disassemble_3("JC", buffer[pc + 1], buffer[pc + 2]) },
+        0xdb => { disassemble_2("IN", buffer[pc + 1]) },
+        0xde => { disassemble_2("SBI", buffer[pc + 1]) },
         0xe1 => { disassemble_1("POP H") },
-        0xe2 => { disassemble_3("JPO", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xe2 => { disassemble_3("JPO", buffer[pc + 1], buffer[pc + 2]) },
         0xe3 => { disassemble_1("XTHL") },
         0xe5 => { disassemble_1("PUSH H") },
-        0xe6 => { disassemble_2("ANI", buffer[pc + 1]); op_bytes = 2 },
+        0xe6 => { disassemble_2("ANI", buffer[pc + 1]) },
         0xe9 => { disassemble_1("PCHL") },
         0xeb => { disassemble_1("XCHG") },
-        0xee => { disassemble_2("XRI", buffer[pc + 1]); op_bytes = 2 },
+        0xee => { disassemble_2("XRI", buffer[pc + 1]) },
         0xf1 => { disassemble_1("POP PSW") },
         0xf5 => { disassemble_1("PUSH PSW") },
-        0xf6 => { disassemble_2("ORI", buffer[pc + 1]); op_bytes = 2 },
+        0xf6 => { disassemble_2("ORI", buffer[pc + 1]) },
         0xf8 => { disassemble_1("RM") },
-        0xfa => { disassemble_3("JM", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
+        0xfa => { disassemble_3("JM", buffer[pc + 1], buffer[pc + 2]) },
         0xfb => { disassemble_1("EI") },
-        0xfc => { disassemble_3("CM", buffer[pc + 1], buffer[pc + 2]); op_bytes = 3; },
-        0xfe => { disassemble_2("CPI", buffer[pc + 1]); op_bytes = 2 },
+        0xfc => { disassemble_3("CM", buffer[pc + 1], buffer[pc + 2]) },
+        0xfe => { disassemble_2("CPI", buffer[pc + 1]) },
         0xff => { disassemble_1("RST 7") },
-           _ => { println!("\t???"); op_bytes = 0; }
+           _ => { println!("\t???"); 0 }
     };
 
     op_bytes
