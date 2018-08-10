@@ -24,6 +24,11 @@ fn disassemble_3(instruction: &'static str, byte_1: u8, byte_2: u8) -> u16 {
     3
 }
 
+fn not_implemented() -> u16 {
+    println!("\t???");
+    0
+}
+
 #[allow(dead_code)]
 fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
     let pc = pc as usize;
@@ -190,7 +195,7 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
         0xfc => { disassemble_3("CM", buffer[pc + 1], buffer[pc + 2]) },
         0xfe => { disassemble_2("CPI", buffer[pc + 1]) },
         0xff => { disassemble_1("RST 7") },
-           _ => { println!("\t???"); 0 }
+           _ => { not_implemented() }
     };
 
     op_bytes
