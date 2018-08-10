@@ -258,6 +258,7 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
         0xda => { disassemble_3("JC", buffer[pc + 1], buffer[pc + 2]) },
         0xdb => { disassemble_2("IN", buffer[pc + 1]) },
         0xdc => { not_implemented() },
+        0xdd => { not_implemented() },
         0xde => { disassemble_2("SBI", buffer[pc + 1]) },
         0xdf => { not_implemented() },
         0xe0 => { disassemble_1("RPO") },
