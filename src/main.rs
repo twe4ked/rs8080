@@ -293,7 +293,7 @@ fn disassemble(pc: u16, buffer: &Vec<u8>) -> u16 {
         0xfd => { not_implemented() },
         0xfe => { disassemble_2("CPI", buffer[pc + 1]) },
         0xff => { disassemble_1("RST 7") },
-           _ => { not_implemented() }
+           _ => unreachable!()
     };
 
     op_bytes
