@@ -314,6 +314,11 @@ fn step(mut state: State) -> State {
     let pc = state.pc as usize;
     let op_code = state.memory[pc];
 
+    if state.pc == (0x10000 - 1) as u16 {
+        println!("PC out of range.");
+        state.pc = 0; return state
+    }
+
     state.pc += 1;
 
     match op_code {
