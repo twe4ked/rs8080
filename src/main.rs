@@ -6,7 +6,7 @@ struct State {
     b: u8,
     pc: u16,
     sp: u16,
-    memory: Vec<u8>,
+    memory: [u8; 0x10000], // 16k
 }
 
 fn disassemble_1(instruction: &'static str) -> u16 {
@@ -301,7 +301,7 @@ fn disassemble(pc: u16, state: &State) -> u16 {
     op_bytes
 }
 
-fn read_16(buffer: &Vec<u8>, pc: usize) -> u16 {
+fn read_16(buffer: &[u8; 0x10000], pc: usize) -> u16 {
     ((buffer[pc + 2] as u16) << 8) | (buffer[pc + 1] as u16)
 }
 
@@ -599,10 +599,17 @@ fn main() -> std::io::Result<()> {
         b: 0,
         pc: 0,
         sp: 0,
-        memory: vec![],
+        memory: ([0; 0x10000]),
     };
 
-    file.read_to_end(&mut state.memory)?;
+    let mut buffer = vec![];
+    file.read_to_end(&mut buffer)?;
+
+    let mut i = 0;
+    while i < buffer.len() {
+        state.memory[i] = buffer[i];
+        i += 1
+    }
 
     if args.get(1) == Some(&"disassemble".to_string()) {
         while state.pc < state.memory.len() as u16 {
