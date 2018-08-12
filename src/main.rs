@@ -1,4 +1,5 @@
 use std::env;
+use std::fmt;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -7,6 +8,12 @@ struct State {
     pc: u16,
     sp: u16,
     memory: [u8; 0x10000], // 16k
+}
+
+impl fmt::Debug for State {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:04x} b: {:02x}, sp: {:02x}", self.pc, self.b, self.sp)
+    }
 }
 
 fn disassemble_1(instruction: &'static str) -> u16 {
@@ -306,6 +313,7 @@ fn read_16(buffer: &[u8; 0x10000], pc: usize) -> u16 {
 }
 
 fn not_implemented(state: &mut State, pc: u16) {
+    println!("{:?}", state);
     disassemble(pc, &state);
     state.pc = 0;
 }
